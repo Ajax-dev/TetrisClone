@@ -9,7 +9,7 @@ public class TetroMove : MonoBehaviour
     public static int gridWidth = 10;
     
     //Pertinent only to Tetrominoes
-    private Vector3 rotationPoint;
+    [SerializeField] private Vector3 rotationPoint;
     private float lastTime;
     private float timeToFall = 0.9f;
     // Start is called before the first frame update
