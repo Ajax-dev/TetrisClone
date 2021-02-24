@@ -26,6 +26,7 @@ public class TetroMove : MonoBehaviour
             transform.position += new Vector3(-1, 0, 0);
             if (!isValidMove())
             {
+                Debug.Log("Wasn't a valid move when going left! | " + transform.position);
                 transform.position += new Vector3(1, 0, 0);
             }
         } else if (Input.GetKeyDown(KeyCode.RightArrow))
@@ -33,7 +34,7 @@ public class TetroMove : MonoBehaviour
             transform.position += new Vector3(1, 0, 0);
             if (!isValidMove())
             {
-                Debug.Log(transform.position);
+                Debug.Log("Wasn't a valid move when going right! | " + transform.position);
                 transform.position += new Vector3(-1, 0, 0);
             }
         } else if (Input.GetKeyDown(KeyCode.UpArrow))
