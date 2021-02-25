@@ -12,6 +12,8 @@ public class TetroMove : MonoBehaviour
     [SerializeField] private Vector3 rotationPoint;
     private float lastTime;
     private float timeToFall = 0.9f;
+
+    private static Transform[,] grid = new Transform[gridWidth, gridHeight];
     // Start is called before the first frame update
     void Start()
     {
@@ -53,11 +55,28 @@ public class TetroMove : MonoBehaviour
             if (!isValidMove())
             {
                 transform.position += new Vector3(0, 1, 0);
+                // Once its touched the ground add it to the array
+                addToGrid();
+                CheckLines();
+                //Then spawn the next tetro
+                this.enabled = false;
+                FindObjectOfType<GenerateTetromino>().SpawnTetro();
             }
             lastTime = Time.time;
         }
     }
 
+    void addToGrid()
+    {
+        foreach (Transform children in transform)
+        {
+            int xRound = Mathf.RoundToInt(children.transform.position.x);
+            int yRound = Mathf.RoundToInt(children.transform.position.y);
+
+            grid[xRound, yRound] = children;
+
+        }
+    }
     bool isValidMove()
     {
         foreach (Transform children in transform)
@@ -65,13 +84,70 @@ public class TetroMove : MonoBehaviour
             int xRound = Mathf.RoundToInt(children.transform.position.x);
             int yRound = Mathf.RoundToInt(children.transform.position.y);
 
+            // Check if tetromino is out of bounds
             if (xRound < 0 || xRound >= gridWidth || yRound < 0 || yRound >= gridHeight)
             {
                 return false;
             }
             
+            // Check if tetromino is already in that position
+            if (grid[xRound, yRound] != null)
+            {
+                return false;
+            }
+
         }
 
         return true;
+    }
+
+    void CheckLines()
+    {
+        for (int i = gridHeight - 1; i >= 0; i--)
+        {
+            if (HasLine(i))
+            {
+                DeleteLine(i);
+                RowDown(i);
+            }
+        }
+    }
+
+    bool HasLine(int line)
+    {
+        for (int i = 0; i < gridWidth; i++)
+        {
+            if (grid[i, line] == null)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    void DeleteLine(int line)
+    {
+        for (int i = 0; i < gridWidth; i++)
+        {
+            Destroy(grid[i, line].gameObject);
+            grid[i, line] = null;
+        }
+    }
+
+    void RowDown(int line)
+    {
+        for (int i = line; i < gridHeight; i++)
+        {
+            for (int j = 0; j < gridWidth; j++)
+            {
+                if (grid[j, i] != null)
+                {
+                    grid[j, i - 1] = grid[j, i];
+                    grid[j, i] = null;
+                    grid[j, i - 1].transform.position += new Vector3(0, -1, 0);
+                }
+            }
+        }
     }
 }
