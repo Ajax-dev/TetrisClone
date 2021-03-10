@@ -12,13 +12,16 @@ public class MainMenu : MonoBehaviour
     public AudioMixer masterMixer;
     public TMP_Dropdown resolutionDropdown;
     public TMP_Dropdown qualityDropdown;
+    public Slider volumeSlider;
     private Resolution[] availableResolutions;
 
     // Retrieve available resolutions
     void Start()
     {
-        //Set quality to default which is high
+        //Set quality to default which is high, and default volume
         SetQuality(qualityDropdown.value);
+        SetVolume(volumeSlider.value);
+        
         availableResolutions = Screen.resolutions;
         
         resolutionDropdown.ClearOptions();
@@ -65,7 +68,7 @@ public class MainMenu : MonoBehaviour
     public void SetQuality(int graphicIndex)
     {
         QualitySettings.SetQualityLevel(graphicIndex);
-        Debug.Log("Quality is now" + graphicIndex);
+        Debug.Log("Quality is now " + graphicIndex);
     }
 
     public void SetFullScreen(bool isFullScreen)
@@ -77,5 +80,6 @@ public class MainMenu : MonoBehaviour
     {
         Resolution res = availableResolutions[resolutionIndex];
         Screen.SetResolution(res.width, res.height, Screen.fullScreen);
+        Debug.Log("Screen resolution set to: " + res.width + "x" + res.height + " and Fullscreen is set to " + Screen.fullScreen);
     }
 }

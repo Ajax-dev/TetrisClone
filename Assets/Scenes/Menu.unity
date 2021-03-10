@@ -412,14 +412,14 @@ MonoBehaviour:
   m_FillRect: {fileID: 541760946}
   m_HandleRect: {fileID: 1547260143}
   m_Direction: 0
-  m_MinValue: -80
-  m_MaxValue: 20
+  m_MinValue: -60
+  m_MaxValue: 5
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: -30
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 786015728}
+      - m_Target: {fileID: 911549125}
         m_MethodName: SetVolume
         m_Mode: 0
         m_Arguments:
@@ -817,6 +817,7 @@ MonoBehaviour:
   masterMixer: {fileID: 0}
   resolutionDropdown: {fileID: 0}
   qualityDropdown: {fileID: 0}
+  volumeSlider: {fileID: 0}
 --- !u!1 &356303580
 GameObject:
   m_ObjectHideFlags: 0
@@ -1379,6 +1380,7 @@ MonoBehaviour:
   masterMixer: {fileID: 0}
   resolutionDropdown: {fileID: 0}
   qualityDropdown: {fileID: 0}
+  volumeSlider: {fileID: 0}
 --- !u!1 &541760945
 GameObject:
   m_ObjectHideFlags: 0
@@ -1907,7 +1909,18 @@ MonoBehaviour:
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 911549125}
+        m_MethodName: SetResolution
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_AlphaFadeSpeed: 0.15
 --- !u!114 &707210433
 MonoBehaviour:
@@ -1955,7 +1968,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 786015727}
-  - component: {fileID: 786015728}
   m_Layer: 5
   m_Name: OptionsMenu
   m_TagString: Untagged
@@ -1992,21 +2004,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 393.71692, y: 433.6394}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &786015728
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 786015726}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a0f87b92de8db740829f12aa6663b4e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  masterMixer: {fileID: 24100000, guid: c1b1873785f61d6468ca71137fcde369, type: 2}
-  resolutionDropdown: {fileID: 707210432}
-  qualityDropdown: {fileID: 1064321807}
 --- !u!1 &788564213
 GameObject:
   m_ObjectHideFlags: 0
@@ -2584,7 +2581,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 911549123}
-  - component: {fileID: 911549124}
+  - component: {fileID: 911549125}
   m_Layer: 5
   m_Name: MainMenu
   m_TagString: Untagged
@@ -2614,7 +2611,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 393.71692, y: 433.6394}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &911549124
+--- !u!114 &911549125
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2626,9 +2623,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a0f87b92de8db740829f12aa6663b4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  masterMixer: {fileID: 0}
-  resolutionDropdown: {fileID: 0}
-  qualityDropdown: {fileID: 0}
+  masterMixer: {fileID: 24100000, guid: c1b1873785f61d6468ca71137fcde369, type: 2}
+  resolutionDropdown: {fileID: 707210432}
+  qualityDropdown: {fileID: 1064321807}
+  volumeSlider: {fileID: 202162033}
 --- !u!1 &914683251
 GameObject:
   m_ObjectHideFlags: 0
@@ -3328,7 +3326,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 786015728}
+      - m_Target: {fileID: 911549125}
         m_MethodName: SetQuality
         m_Mode: 0
         m_Arguments:
@@ -3954,7 +3952,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 786015728}
+      - m_Target: {fileID: 0}
         m_MethodName: SetFullScreen
         m_Mode: 0
         m_Arguments:
@@ -4988,7 +4986,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1733498727}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &1733498729
 Camera:
   m_ObjectHideFlags: 0
