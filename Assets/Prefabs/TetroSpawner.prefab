@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7103542861420959278
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7103542861420959276}
+  - component: {fileID: 7103542861420959277}
+  m_Layer: 0
+  m_Name: TetroSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7103542861420959276
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7103542861420959278}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 4, y: 20, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7103542861420959277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7103542861420959278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e48669fb3d35c84896decfc28f79934, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tetrominoes:
+  - {fileID: 1333870488974053603, guid: 588fde52045ba614684c1f7ab3027966, type: 3}
+  - {fileID: 1739140591982787895, guid: 2ec9e9b7471c06444bc16025541ca357, type: 3}
+  - {fileID: 6633329101999236303, guid: 9de0a791ffdeefe47ab05e3f07f415aa, type: 3}
+  - {fileID: 3375172552855336381, guid: 9adeceb5519e0fe4688b46ec803e7b35, type: 3}
+  - {fileID: 4287383874008056959, guid: 4dc32241cc065414aa98f04571abfa7a, type: 3}
+  - {fileID: 3493509741020249455, guid: 698d2991bfa459043ba9aeb376e1f109, type: 3}
+  - {fileID: 8766921944263420874, guid: 8391dcff4e977f04a93be88b6a5bb137, type: 3}

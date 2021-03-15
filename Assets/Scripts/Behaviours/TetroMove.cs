@@ -11,11 +11,16 @@ public class TetroMove : MonoBehaviour
     //Pertinent only to Tetrominoes
     [SerializeField] private Vector3 rotationPoint;
     private float lastTime;
-    private float timeToFall = 0.9f;
+    private float timeToFall = 0.5f;
 
     private static Transform[,] grid = new Transform[gridWidth, gridHeight];
+
+    public static event Action updateScore;
+    public static event Action lineCleared;
+
+    public static event Action removeLife;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         
     }
@@ -109,6 +114,8 @@ public class TetroMove : MonoBehaviour
             {
                 DeleteLine(i);
                 RowDown(i);
+                updateScore?.Invoke();
+                lineCleared?.Invoke();
             }
         }
     }
