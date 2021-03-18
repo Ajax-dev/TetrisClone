@@ -1,28 +1,21 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 public class TetroMove : MonoBehaviour
 {
-    public static int gridHeight = 22;
-    public static int gridWidth = 10;
-    
     //Pertinent only to Tetrominoes
     [SerializeField] private Vector3 rotationPoint;
+    private Transform[] tetrominoes;
     private float lastTime;
     private float timeToFall = 0.5f;
 
-    private static Transform[,] grid = new Transform[gridWidth, gridHeight];
-
-    public static event Action updateScore;
-    public static event Action lineCleared;
-
-    public static event Action removeLife;
     // Start is called before the first frame update
     void Awake()
     {
-        
+        tetrominoes = GetComponentsInChildren<Transform>();
     }
 
     // Update is called once per frame
@@ -31,7 +24,7 @@ public class TetroMove : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftArrow)) 
         {
             transform.position += new Vector3(-1, 0, 0);
-            if (!isValidMove())
+            if (!GridController.instance.isValidMove(tetrominoes))
             {
                 Debug.Log("Wasn't a valid move when going left! | " + transform.position);
                 transform.position += new Vector3(1, 0, 0);
@@ -39,7 +32,7 @@ public class TetroMove : MonoBehaviour
         } else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             transform.position += new Vector3(1, 0, 0);
-            if (!isValidMove())
+            if (!GridController.instance.isValidMove(tetrominoes))
             {
                 Debug.Log("Wasn't a valid move when going right! | " + transform.position);
                 transform.position += new Vector3(-1, 0, 0);
@@ -48,7 +41,7 @@ public class TetroMove : MonoBehaviour
         {
             //This is the tetromino rotation
             transform.RotateAround(transform.TransformPoint(rotationPoint),new Vector3(0,0,1),90);
-            if (!isValidMove())
+            if (!GridController.instance.isValidMove(tetrominoes))
             {
                 transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0,0,1), -90);
             }
@@ -57,12 +50,12 @@ public class TetroMove : MonoBehaviour
         if(Time.time - lastTime > (Input.GetKey(KeyCode.DownArrow) ? timeToFall / 10 : timeToFall))
         {
             transform.position += new Vector3(0, -1, 0);
-            if (!isValidMove())
+            if (!GridController.instance.isValidMove(tetrominoes))
             {
                 transform.position += new Vector3(0, 1, 0);
                 // Once its touched the ground add it to the array
-                addToGrid();
-                CheckLines();
+                GridController.instance.addToGrid(tetrominoes);
+                GridController.instance.CheckLines();
                 //Then spawn the next tetro
                 this.enabled = false;
                 FindObjectOfType<GenerateTetromino>().SpawnTetro();
@@ -70,91 +63,16 @@ public class TetroMove : MonoBehaviour
             lastTime = Time.time;
         }
     }
-
-    void addToGrid()
+    public void UpdateGameState ()
     {
-        foreach (Transform children in transform)
+        if (Time.timeScale == 0)
         {
-            int xRound = Mathf.RoundToInt(children.transform.position.x);
-            int yRound = Mathf.RoundToInt(children.transform.position.y);
-
-            grid[xRound, yRound] = children;
-
+            Time.timeScale = 1;
         }
-    }
-    bool isValidMove()
-    {
-        foreach (Transform children in transform)
+        else
         {
-            int xRound = Mathf.RoundToInt(children.transform.position.x);
-            int yRound = Mathf.RoundToInt(children.transform.position.y);
-
-            // Check if tetromino is out of bounds
-            if (xRound < 0 || xRound >= gridWidth || yRound < 0 || yRound >= gridHeight)
-            {
-                return false;
-            }
-            
-            // Check if tetromino is already in that position
-            if (grid[xRound, yRound] != null)
-            {
-                return false;
-            }
-
-        }
-
-        return true;
-    }
-
-    void CheckLines()
-    {
-        for (int i = gridHeight - 1; i >= 0; i--)
-        {
-            if (HasLine(i))
-            {
-                DeleteLine(i);
-                RowDown(i);
-                updateScore?.Invoke();
-                lineCleared?.Invoke();
-            }
+            Time.timeScale = 0;
         }
     }
 
-    bool HasLine(int line)
-    {
-        for (int i = 0; i < gridWidth; i++)
-        {
-            if (grid[i, line] == null)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    void DeleteLine(int line)
-    {
-        for (int i = 0; i < gridWidth; i++)
-        {
-            Destroy(grid[i, line].gameObject);
-            grid[i, line] = null;
-        }
-    }
-
-    void RowDown(int line)
-    {
-        for (int i = line; i < gridHeight; i++)
-        {
-            for (int j = 0; j < gridWidth; j++)
-            {
-                if (grid[j, i] != null)
-                {
-                    grid[j, i - 1] = grid[j, i];
-                    grid[j, i] = null;
-                    grid[j, i - 1].transform.position += new Vector3(0, -1, 0);
-                }
-            }
-        }
-    }
 }

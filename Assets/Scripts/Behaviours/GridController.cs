@@ -5,13 +5,21 @@ using UnityEngine;
 
 public class GridController : MonoBehaviour
 {
+    public static event Action updateScore;
+    public static event Action lineCleared;
+
+    public static event Action removeLife;
+
+    public static event Action updateGame;
     
-    private static GridController instance;
+    public static GridController instance;
     
-    private static int gridHeight = 22;
+    private static int gridHeight = 21;
     private static int gridWidth = 10;
     
     private static Transform[,] grid = new Transform[gridWidth, gridHeight];
+
+    private TetroMove[] tetroBlocks;
 
     private void Awake()
     {
@@ -26,20 +34,21 @@ public class GridController : MonoBehaviour
         }
     }
 
-    public void addToGrid()
+    public void addToGrid(Transform[] tetros)
     {
-        foreach (Transform children in transform)
+        foreach (Transform children in tetros)
         {
             int xRound = Mathf.RoundToInt(children.transform.position.x);
             int yRound = Mathf.RoundToInt(children.transform.position.y);
-
+            Debug.Log(xRound + " is x and y is " + yRound);
             grid[xRound, yRound] = children;
-
         }
     }
-    public bool isValidMove()
+    
+    public bool isValidMove(Transform[] tetros)
     {
-        foreach (Transform children in transform)
+        // Debug.Log(tetros.Length + " this is tetros string");
+        foreach (Transform children in tetros)
         {
             int xRound = Mathf.RoundToInt(children.transform.position.x);
             int yRound = Mathf.RoundToInt(children.transform.position.y);
@@ -69,6 +78,8 @@ public class GridController : MonoBehaviour
             {
                 DeleteLine(i);
                 RowDown(i);
+                lineCleared.Invoke();
+                updateScore.Invoke();
             }
         }
     }
@@ -92,6 +103,7 @@ public class GridController : MonoBehaviour
         {
             Destroy(grid[i, line].gameObject);
             grid[i, line] = null;
+            
         }
     }
 

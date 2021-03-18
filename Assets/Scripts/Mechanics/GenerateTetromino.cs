@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class GenerateTetromino : MonoBehaviour
 {
-    [SerializeField] private GameObject[] tetrominoes;
+    [SerializeField] private TetroMove[] tetrominoes;
+
+    [SerializeField] private GridController gc;
     // Start is called before the first frame update
     void Start()
     {
@@ -14,6 +16,7 @@ public class GenerateTetromino : MonoBehaviour
     // Update is called once per frame
     public void SpawnTetro()
     {
-        Instantiate(tetrominoes[Random.Range(0, tetrominoes.Length)], transform.position, Quaternion.identity);
+        TetroMove t = Instantiate(tetrominoes[Random.Range(0, tetrominoes.Length)], transform.position,
+            Quaternion.identity);
     }
 }

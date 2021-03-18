@@ -6,9 +6,10 @@ using UnityEngine;
 //Use service locator and observer
 public class GameData
 {
-    public int score;
-    public int level;
-    public int lives;
+    private int score;
+    private int level;
+    private int lives;
+    private int linesCleared;
 
     // To be called first on the game being started
     public void Init()
@@ -16,6 +17,7 @@ public class GameData
         score = 0;
         level = 1;
         lives = 3;
+        linesCleared = 0;
     }
     
     public void AddScore(int points)
@@ -91,6 +93,11 @@ public class GameData
         return lives;
     }
 
+    public void TakeLife()
+    {
+        lives--;
+    }
+
     public int GetLevel()
     {
         return level;
@@ -99,5 +106,15 @@ public class GameData
     public int GetScore()
     {
         return score;
+    }
+
+    public void SetLineCleared()
+    {
+        linesCleared++;
+    }
+
+    public int GetLinesCleared()
+    {
+        return linesCleared;
     }
 }
