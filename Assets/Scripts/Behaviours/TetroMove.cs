@@ -11,10 +11,10 @@ public class TetroMove : MonoBehaviour
     [SerializeField] private Vector3 rotationPoint;
     [SerializeField] private bool isGhost;
     private Transform[] tetromino;
+    private TetroMove GhostPair;
     private float lastTime;
     private float timeToFall = 0.5f;
     private bool isPlaced = false;
-    private TetroMove GhostPair;
 
     // Start is called before the first frame update
     void Awake()
@@ -24,7 +24,6 @@ public class TetroMove : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log(this.name);
         if (isGhost)
         {
             transform.position += new Vector3(0, 0, -5);
@@ -44,12 +43,10 @@ public class TetroMove : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
                 MoveLeft();
-                // GhostMove();
             }
             else if (Input.GetKeyDown(KeyCode.RightArrow))
             {
                 MoveRight();
-                // GhostMove();
             }
             else if (Input.GetKeyDown(KeyCode.UpArrow))
             {
@@ -86,6 +83,7 @@ public class TetroMove : MonoBehaviour
             // Debug.Log("Wasn't a valid move when going right! | " + transform.position);
             transform.position += new Vector3(-1, 0, 0);
         }
+        // GhostPair.GhostMove(transform.position);
     }
 
     public void MoveLeft()
@@ -108,16 +106,18 @@ public class TetroMove : MonoBehaviour
         }
     }
 
-    public void SetGhostPair(TetroMove ghost)
+    public void SetGhostPair(TetroMove g)
     {
-        this.GhostPair = ghost;
+        this.GhostPair = g;
     }
-    public void GhostMove()
+    public void GhostMove(Vector3 movement)
     {
         do
         {
-            GhostPair.gameObject.transform.position += new Vector3(0, -1, 0);
-        } while (GhostPair.gameObject.transform.position.x != transform.position.x);
+            transform.position +=  Vector3.up;
+        } while (!GridController.instance.isValidMove(tetromino));
+
+        transform.position += movement;
     }
     public void MoveDown()
     {
