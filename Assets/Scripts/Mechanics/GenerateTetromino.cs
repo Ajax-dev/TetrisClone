@@ -5,6 +5,7 @@ using UnityEngine;
 public class GenerateTetromino : MonoBehaviour
 {
     [SerializeField] private TetroMove[] tetrominoes;
+    [SerializeField] private TetroMove[] ghosts;
 
     [SerializeField] private GridController gc;
     // Start is called before the first frame update
@@ -16,8 +17,10 @@ public class GenerateTetromino : MonoBehaviour
     // Update is called once per frame
     public void SpawnTetro()
     {
-        //Spawn the same but a ghost block
-        TetroMove t = Instantiate(tetrominoes[Random.Range(0, tetrominoes.Length)], transform.position,
+        int spawnNumber = Random.Range(0, tetrominoes.Length);
+        TetroMove t = Instantiate(tetrominoes[spawnNumber], transform.position,
             Quaternion.identity);
+        TetroMove g = Instantiate(ghosts[spawnNumber], transform.position, Quaternion.identity);
+        t.GhostPair = g;
     }
 }

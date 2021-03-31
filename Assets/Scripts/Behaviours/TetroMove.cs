@@ -9,10 +9,12 @@ public class TetroMove : MonoBehaviour
 {
     //Pertinent only to tetromino
     [SerializeField] private Vector3 rotationPoint;
+    [SerializeField] private bool isGhost;
     private Transform[] tetromino;
     private float lastTime;
     private float timeToFall = 0.5f;
-    private bool placed = false;
+    private bool isPlaced = false;
+    public TetroMove GhostPair;
 
     // Start is called before the first frame update
     void Awake()
@@ -20,18 +22,34 @@ public class TetroMove : MonoBehaviour
         tetromino = GetComponentsInChildren<Transform>();
     }
 
+    private void Start()
+    {
+        if (isGhost)
+        {
+            transform.position += new Vector3(0, 0, -5);
+            do
+            {
+                Debug.Log(transform.position);
+                transform.position += new Vector3(0, -1, 0);
+            } while (GridController.instance.isValidMove(tetromino));
+            transform.position += new Vector3(0, +1, 0);
+            
+        }
+    }
     // Update is called once per frame
     void Update()
     {
-        if (!placed)
+        if (!isPlaced && !isGhost)
         {
             if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
                 MoveLeft();
+                // GhostMove();
             }
             else if (Input.GetKeyDown(KeyCode.RightArrow))
             {
                 MoveRight();
+                // GhostMove();
             }
             else if (Input.GetKeyDown(KeyCode.UpArrow))
             {
@@ -43,7 +61,6 @@ public class TetroMove : MonoBehaviour
                 MoveDown();
             }
         }
-        Debug.Log(this.name + " has " + transform.childCount + " children");
         if (transform.childCount == 0)
         {
             Destroy(this.gameObject);
@@ -61,7 +78,6 @@ public class TetroMove : MonoBehaviour
             Time.timeScale = 0;
         }
     }
-
     public void MoveRight()
     {
         transform.position += new Vector3(1, 0, 0);
@@ -92,6 +108,13 @@ public class TetroMove : MonoBehaviour
         }
     }
 
+    public void GhostMove()
+    {
+        do
+        {
+            GhostPair.gameObject.transform.position += new Vector3(0, -1, 0);
+        } while (GhostPair.gameObject.transform.position.x != transform.position.x);
+    }
     public void MoveDown()
     {
         transform.position += new Vector3(0, -1, 0);
@@ -103,7 +126,8 @@ public class TetroMove : MonoBehaviour
             GridController.instance.CheckLines();
             //Then spawn the next tetro
             // this.enabled = false;
-            this.placed = true;
+            this.isPlaced = true;
+            Destroy(GhostPair.gameObject);
             FindObjectOfType<GenerateTetromino>().SpawnTetro();
         }
         lastTime = Time.time;

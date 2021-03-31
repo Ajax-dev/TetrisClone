@@ -129,6 +129,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationPoint: {x: 0, y: 0, z: 0}
+  isGhost: 0
 --- !u!1 &3493509741625133647
 GameObject:
   m_ObjectHideFlags: 0
