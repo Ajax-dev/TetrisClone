@@ -16,6 +16,7 @@ public class GenerateTetromino : MonoBehaviour
     // Update is called once per frame
     public void SpawnTetro()
     {
+        //Spawn the same but a ghost block
         TetroMove t = Instantiate(tetrominoes[Random.Range(0, tetrominoes.Length)], transform.position,
             Quaternion.identity);
     }

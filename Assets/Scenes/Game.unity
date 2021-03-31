@@ -1587,6 +1587,7 @@ MonoBehaviour:
   lives: {fileID: 139087105}
   score: {fileID: 1410463658}
   highscore: {fileID: 1689768353}
+  linesCleared: {fileID: 999794223}
 --- !u!1 &1689768351
 GameObject:
   m_ObjectHideFlags: 0

@@ -40,11 +40,10 @@ public class GridController : MonoBehaviour
         {
             int xRound = Mathf.RoundToInt(children.transform.position.x);
             int yRound = Mathf.RoundToInt(children.transform.position.y);
-            Debug.Log(xRound + " is x and y is " + yRound);
+            // Debug.Log(xRound + " is x and y is " + yRound);
             grid[xRound, yRound] = children;
         }
     }
-    
     public bool isValidMove(Transform[] tetros)
     {
         // Debug.Log(tetros.Length + " this is tetros string");

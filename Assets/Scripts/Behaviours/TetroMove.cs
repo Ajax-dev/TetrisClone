@@ -1,66 +1,53 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 public class TetroMove : MonoBehaviour
 {
-    //Pertinent only to Tetrominoes
+    //Pertinent only to tetromino
     [SerializeField] private Vector3 rotationPoint;
-    private Transform[] tetrominoes;
+    private Transform[] tetromino;
     private float lastTime;
     private float timeToFall = 0.5f;
+    private bool placed = false;
 
     // Start is called before the first frame update
     void Awake()
     {
-        tetrominoes = GetComponentsInChildren<Transform>();
+        tetromino = GetComponentsInChildren<Transform>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftArrow)) 
+        if (!placed)
         {
-            transform.position += new Vector3(-1, 0, 0);
-            if (!GridController.instance.isValidMove(tetrominoes))
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                Debug.Log("Wasn't a valid move when going left! | " + transform.position);
-                transform.position += new Vector3(1, 0, 0);
+                MoveLeft();
             }
-        } else if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            transform.position += new Vector3(1, 0, 0);
-            if (!GridController.instance.isValidMove(tetrominoes))
+            else if (Input.GetKeyDown(KeyCode.RightArrow))
             {
-                Debug.Log("Wasn't a valid move when going right! | " + transform.position);
-                transform.position += new Vector3(-1, 0, 0);
+                MoveRight();
             }
-        } else if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            //This is the tetromino rotation
-            transform.RotateAround(transform.TransformPoint(rotationPoint),new Vector3(0,0,1),90);
-            if (!GridController.instance.isValidMove(tetrominoes))
+            else if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0,0,1), -90);
+                Rotate();
+            }
+
+            if (Time.time - lastTime > (Input.GetKey(KeyCode.DownArrow) ? timeToFall / 10 : timeToFall))
+            {
+                MoveDown();
             }
         }
-        
-        if(Time.time - lastTime > (Input.GetKey(KeyCode.DownArrow) ? timeToFall / 10 : timeToFall))
+        Debug.Log(this.name + " has " + transform.childCount + " children");
+        if (transform.childCount == 0)
         {
-            transform.position += new Vector3(0, -1, 0);
-            if (!GridController.instance.isValidMove(tetrominoes))
-            {
-                transform.position += new Vector3(0, 1, 0);
-                // Once its touched the ground add it to the array
-                GridController.instance.addToGrid(tetrominoes);
-                GridController.instance.CheckLines();
-                //Then spawn the next tetro
-                this.enabled = false;
-                FindObjectOfType<GenerateTetromino>().SpawnTetro();
-            }
-            lastTime = Time.time;
+            Destroy(this.gameObject);
+            Debug.Log(this.name + " has no more children");
         }
     }
     public void UpdateGameState ()
@@ -75,4 +62,50 @@ public class TetroMove : MonoBehaviour
         }
     }
 
+    public void MoveRight()
+    {
+        transform.position += new Vector3(1, 0, 0);
+        if (!GridController.instance.isValidMove(tetromino))
+        {
+            // Debug.Log("Wasn't a valid move when going right! | " + transform.position);
+            transform.position += new Vector3(-1, 0, 0);
+        }
+    }
+
+    public void MoveLeft()
+    {
+        transform.position += new Vector3(-1, 0, 0);
+        if (!GridController.instance.isValidMove(tetromino))
+        {
+            // Debug.Log("Wasn't a valid move when going left! | " + transform.position);
+            transform.position += new Vector3(1, 0, 0);
+        }
+    }
+
+    public void Rotate()
+    {
+        //This is the tetromino rotation
+        transform.RotateAround(transform.TransformPoint(rotationPoint),new Vector3(0,0,1),90);
+        if (!GridController.instance.isValidMove(tetromino))
+        {
+            transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0,0,1), -90);
+        }
+    }
+
+    public void MoveDown()
+    {
+        transform.position += new Vector3(0, -1, 0);
+        if (!GridController.instance.isValidMove(tetromino))
+        {
+            transform.position += new Vector3(0, 1, 0);
+            // Once its touched the ground add it to the array
+            GridController.instance.addToGrid(tetromino);
+            GridController.instance.CheckLines();
+            //Then spawn the next tetro
+            // this.enabled = false;
+            this.placed = true;
+            FindObjectOfType<GenerateTetromino>().SpawnTetro();
+        }
+        lastTime = Time.time;
+    }
 }
