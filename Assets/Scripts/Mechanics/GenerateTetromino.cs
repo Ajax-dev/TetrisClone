@@ -21,6 +21,6 @@ public class GenerateTetromino : MonoBehaviour
         TetroMove t = Instantiate(tetrominoes[spawnNumber], transform.position,
             Quaternion.identity);
         TetroMove g = Instantiate(ghosts[spawnNumber], transform.position, Quaternion.identity);
-        t.GhostPair = g;
+        t.SetGhostPair(g);
     }
 }

@@ -14,7 +14,7 @@ public class TetroMove : MonoBehaviour
     private float lastTime;
     private float timeToFall = 0.5f;
     private bool isPlaced = false;
-    public TetroMove GhostPair;
+    private TetroMove GhostPair;
 
     // Start is called before the first frame update
     void Awake()
@@ -24,12 +24,12 @@ public class TetroMove : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log(this.name);
         if (isGhost)
         {
             transform.position += new Vector3(0, 0, -5);
             do
             {
-                Debug.Log(transform.position);
                 transform.position += new Vector3(0, -1, 0);
             } while (GridController.instance.isValidMove(tetromino));
             transform.position += new Vector3(0, +1, 0);
@@ -108,6 +108,10 @@ public class TetroMove : MonoBehaviour
         }
     }
 
+    public void SetGhostPair(TetroMove ghost)
+    {
+        this.GhostPair = ghost;
+    }
     public void GhostMove()
     {
         do
