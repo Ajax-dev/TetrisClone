@@ -78,21 +78,24 @@ public class TetroMove : MonoBehaviour
     public void MoveRight()
     {
         transform.position += new Vector3(1, 0, 0);
+        GhostPair.GhostMove(Vector3.right);
         if (!GridController.instance.isValidMove(tetromino))
         {
             // Debug.Log("Wasn't a valid move when going right! | " + transform.position);
             transform.position += new Vector3(-1, 0, 0);
+            GhostPair.GhostMove(Vector3.left);
         }
-        // GhostPair.GhostMove(transform.position);
     }
 
     public void MoveLeft()
     {
         transform.position += new Vector3(-1, 0, 0);
+        GhostPair.GhostMove(Vector3.left);
         if (!GridController.instance.isValidMove(tetromino))
         {
             // Debug.Log("Wasn't a valid move when going left! | " + transform.position);
             transform.position += new Vector3(1, 0, 0);
+            GhostPair.GhostMove(Vector3.right);
         }
     }
 
@@ -100,27 +103,16 @@ public class TetroMove : MonoBehaviour
     {
         //This is the tetromino rotation
         transform.RotateAround(transform.TransformPoint(rotationPoint),new Vector3(0,0,1),90);
+        GhostPair.GhostRotate(new Vector3(0,0,1),90);
         if (!GridController.instance.isValidMove(tetromino))
         {
             transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0,0,1), -90);
+            GhostPair.GhostRotate(new Vector3(0,0,1),-90);
         }
-    }
-
-    public void SetGhostPair(TetroMove g)
-    {
-        this.GhostPair = g;
-    }
-    public void GhostMove(Vector3 movement)
-    {
-        do
-        {
-            transform.position +=  Vector3.up;
-        } while (!GridController.instance.isValidMove(tetromino));
-
-        transform.position += movement;
     }
     public void MoveDown()
     {
+        GhostPair.GhostToBottom();
         transform.position += new Vector3(0, -1, 0);
         if (!GridController.instance.isValidMove(tetromino))
         {
@@ -135,5 +127,51 @@ public class TetroMove : MonoBehaviour
             FindObjectOfType<GenerateTetromino>().SpawnTetro();
         }
         lastTime = Time.time;
+    }
+    
+    /**
+     * Functions for ghost block
+     */
+    public void SetGhostPair(TetroMove g)
+    {
+        this.GhostPair = g;
+    }
+    private void GhostToBottom()
+    {
+        
+        transform.position += new Vector3(0, -1, 0);
+        if (GridController.instance.isValidMove(tetromino))
+        {
+            GhostToBottom();
+        }
+        if (!GridController.instance.isValidMove(tetromino))
+        {
+            transform.position += new Vector3(0, 1, 0);
+            GhostUp();
+        }
+    }
+
+    private void GhostUp()
+    {
+        if (!GridController.instance.isValidMove(tetromino))
+        {
+            transform.position += Vector3.up;
+            GhostUp();
+        }
+    }
+
+    private void GhostRotate(Vector3 rotation, float angle)
+    {
+        transform.RotateAround(transform.TransformPoint(rotationPoint),rotation, angle);   
+    }
+    private void GhostMove(Vector3 movement)
+    {
+        Debug.Log("GhostMove called on: " + this.gameObject.name);
+        transform.position += movement;
+        if (!GridController.instance.isValidMove(tetromino))
+        {
+            Debug.Log("move not complete " + " because trying to get past " + transform.position.normalized);
+
+        }
     }
 }

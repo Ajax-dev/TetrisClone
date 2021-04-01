@@ -371,5 +371,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4200f6ce7e03bad45b253d8064872009, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationPoint: {x: 0, y: 0, z: 0}
+  rotationPoint: {x: 0.5, y: 0.5, z: 0}
   isGhost: 1
