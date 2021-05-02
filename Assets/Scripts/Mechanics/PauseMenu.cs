@@ -44,6 +44,9 @@ public class PauseMenu : MonoBehaviour
     {
         Time.timeScale = 1f;
         Debug.Log("Loading menu");
+        // GameMasterController.oldCommands.Clear();
+        // GameMasterController.timeOfCommand.Clear();
+        // GameMasterController.tetroNum.Clear();
         // SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex -1);
         SceneManager.LoadScene("Menu");
         

@@ -17,6 +17,9 @@ public class TetroMove : MonoBehaviour
     private bool isPlaced = false;
     
     public int tetroEnum;
+    
+    //Replay commands
+    public static string replayDir;
 
     // Start is called before the first frame update
     void Awake()
@@ -26,6 +29,14 @@ public class TetroMove : MonoBehaviour
 
     private void Start()
     {
+        if (GameMasterController.isReplay)
+        {
+            Debug.Log("Starting replay of " + Time.time);
+        }
+        else
+        {
+            Debug.Log("Tetromove " + Time.time);
+        }
         if (isGhost)
         {
             transform.position += new Vector3(0, 0, -5);
@@ -40,26 +51,106 @@ public class TetroMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!GameMasterController.isReplay)
+        {
+            if (!isPlaced && !isGhost)
+            {
+                if (Input.GetKeyDown(KeyCode.LeftArrow))
+                {
+                    MoveLeft();
+                }
+                else if (Input.GetKeyDown(KeyCode.RightArrow))
+                {
+                    MoveRight();
+                }
+                else if (Input.GetKeyDown(KeyCode.UpArrow))
+                {
+                    Rotate();
+                }
+
+                if (Time.time - lastTime > (Input.GetKey(KeyCode.DownArrow) ? timeToFall / 10 : timeToFall))
+                {
+                    MoveDown();
+                }
+            }
+
+            if (transform.childCount == 0)
+            {
+                Destroy(this.gameObject);
+                Debug.Log(this.name + " has no more children");
+            }
+        }
+        else
+        {
+            // ReplayUpdate();
+            PlayReplay();
+        }
+    }
+
+    private void PlayReplay()
+    {
+        print("Size of old commands " + GameMasterController.oldCommands.Count);
+        print("Size of time " + GameMasterController.timeOfCommand.Count);
+        print("Size of tetronum " + GameMasterController.tetroNum.Count);
+        if (Time.time == GameMasterController.timeOfCommand[0])
+        {
+            replayDir = GameMasterController.oldCommands[0];
+            GameMasterController.timeOfCommand.RemoveAt(0);
+            GameMasterController.oldCommands.RemoveAt(0);
+            GameMasterController.tetroNum.RemoveAt(0);
+            switch (replayDir)
+            {
+                case "Spawn":
+                    FindObjectOfType<GenerateTetromino>().SpawnTetro();
+                    break;
+                case "L":
+                    ReplayLeft();
+                    break;
+                case "R":
+                    ReplayRight();
+                    break;
+                case "T":
+                    ReplayRotate();
+                    break;
+                case "D":
+                    ReplayDown();
+                    break;
+                default:
+                    Debug.Log("No commands");
+                    break;
+            }
+        }
+    }
+    private void ReplayUpdate()
+    {
         if (!isPlaced && !isGhost)
         {
-            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            if (replayDir == "L")
             {
                 MoveLeft();
             }
-            else if (Input.GetKeyDown(KeyCode.RightArrow))
+            else if (replayDir == "R")
             {
                 MoveRight();
             }
-            else if (Input.GetKeyDown(KeyCode.UpArrow))
+            else if (replayDir == "T")
             {
                 Rotate();
             }
 
-            if (Time.time - lastTime > (Input.GetKey(KeyCode.DownArrow) ? timeToFall / 10 : timeToFall))
+            if (replayDir == "D")
             {
                 MoveDown();
             }
+            else
+            {
+                if (Time.time - lastTime > (Input.GetKey(KeyCode.DownArrow) ? timeToFall / 10 : timeToFall))
+                {
+                    MoveDown();
+                }
+            }
         }
+
         if (transform.childCount == 0)
         {
             Destroy(this.gameObject);
@@ -70,6 +161,7 @@ public class TetroMove : MonoBehaviour
     
     public void MoveRight()
     {
+        GameMasterController.instance.updateCommandPattern("R", tetroEnum);
         transform.position += new Vector3(1, 0, 0);
         GhostPair.GhostMove(Vector3.right);
         if (!GridController.instance.isValidMove(tetromino))
@@ -78,11 +170,12 @@ public class TetroMove : MonoBehaviour
             transform.position += new Vector3(-1, 0, 0);
             GhostPair.GhostMove(Vector3.left);
         }
-        GameMasterController.instance.updateCommandPattern(transform.position, tetroEnum);
+        // GameMasterController.instance.updateCommandPattern(transform.position, tetroEnum);
     }
 
     public void MoveLeft()
     {
+        GameMasterController.instance.updateCommandPattern("L", tetroEnum);
         transform.position += new Vector3(-1, 0, 0);
         GhostPair.GhostMove(Vector3.left);
         if (!GridController.instance.isValidMove(tetromino))
@@ -91,12 +184,12 @@ public class TetroMove : MonoBehaviour
             transform.position += new Vector3(1, 0, 0);
             GhostPair.GhostMove(Vector3.right);
         }
-        GameMasterController.instance.updateCommandPattern(transform.position, tetroEnum);
     }
 
     public void Rotate()
     {
         //This is the tetromino rotation
+        GameMasterController.instance.updateCommandPattern("T", tetroEnum);
         transform.RotateAround(transform.TransformPoint(rotationPoint),new Vector3(0,0,1),90);
         GhostPair.GhostRotate(new Vector3(0,0,1),90);
         if (!GridController.instance.isValidMove(tetromino))
@@ -104,11 +197,11 @@ public class TetroMove : MonoBehaviour
             transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0,0,1), -90);
             GhostPair.GhostRotate(new Vector3(0,0,1),-90);
         }
-        GameMasterController.instance.updateCommandPattern(transform.position, tetroEnum);
     }
     public void MoveDown()
     {
         GhostPair.GhostToBottom();
+        GameMasterController.instance.updateCommandPattern("D", tetroEnum);
         transform.position += new Vector3(0, -1, 0);
         if (!GridController.instance.isValidMove(tetromino))
         {
@@ -121,9 +214,9 @@ public class TetroMove : MonoBehaviour
             this.isPlaced = true;
             Destroy(GhostPair.gameObject);
             FindObjectOfType<GenerateTetromino>().SpawnTetro();
+            GameMasterController.instance.updateCommandPattern("Spawn", tetroEnum);
         }
         lastTime = Time.time;
-        GameMasterController.instance.updateCommandPattern(transform.position, tetroEnum);
     }
     
     /**
@@ -169,6 +262,53 @@ public class TetroMove : MonoBehaviour
         {
             Debug.Log("move not complete " + " because trying to get past " + transform.position.normalized);
 
+        }
+    }
+    
+    // Functions for replay
+    private void ReplayLeft()
+    {
+        transform.position += new Vector3(-1, 0, 0);
+        if (!GridController.instance.isValidMove(tetromino))
+        {
+            // Debug.Log("Wasn't a valid move when going left! | " + transform.position);
+            transform.position += new Vector3(1, 0, 0);
+        }
+    }
+    
+    private void ReplayRight()
+    {
+        transform.position += new Vector3(1, 0, 0);
+        if (!GridController.instance.isValidMove(tetromino))
+        {
+            // Debug.Log("Wasn't a valid move when going left! | " + transform.position);
+            transform.position += new Vector3(-1, 0, 0);
+        }
+    }
+
+    private void ReplayDown()
+    {
+        transform.position += new Vector3(0, -1, 0);
+        if (!GridController.instance.isValidMove(tetromino))
+        {
+            transform.position += new Vector3(0, 1, 0);
+            // Once its touched the ground add it to the array
+            GridController.instance.addToGrid(tetromino);
+            GridController.instance.CheckLines();
+            //Then spawn the next tetro
+            // this.enabled = false;
+            this.isPlaced = true;
+            FindObjectOfType<GenerateTetromino>().SpawnTetro();
+        }
+        lastTime = Time.time;
+    }
+
+    private void ReplayRotate()
+    {
+        transform.RotateAround(transform.TransformPoint(rotationPoint),new Vector3(0,0,1),90);
+        if (!GridController.instance.isValidMove(tetromino))
+        {
+            transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0,0,1), -90);
         }
     }
 }

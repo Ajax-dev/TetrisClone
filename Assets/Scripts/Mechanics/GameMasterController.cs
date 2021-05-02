@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 //Using observer pattern
 
@@ -82,22 +83,20 @@ public class GameMasterController : MonoBehaviour
     
     // Command pattern
     //coordinate of tetro - command pattern
-    public static List<Vector3> oldCommands = new List<Vector3>();
+    public static List<String> oldCommands = new List<String>();
+    // public static List<Vector3> oldCommands = new List<Vector3>();
     public static List<float> timeOfCommand = new List<float>();
     public static List<int> tetroNum = new List<int>();
-    
-    public void updateCommandPattern(Vector3 coords, int tetroEnum)
+    public void updateCommandPattern(String command, int tetroEnum)
     {
         // Debug.Log("transform is " + coords.ToString() + " with a time of " + Time.timeSinceLevelLoad + " tetro num is " + tetroEnum);
-        if (Time.timeSinceLevelLoad == 0)
+        if (SceneManager.GetActiveScene() == SceneManager.GetSceneByName("Game") && !isReplay)
         {
-            oldCommands.Clear();
-            timeOfCommand.Clear();
-            tetroNum.Clear();
+            oldCommands.Add(command);
+            timeOfCommand.Add(Time.timeSinceLevelLoad);
+            tetroNum.Add(tetroEnum);
+            print(oldCommands[oldCommands.Count - 1]);
         }
-        oldCommands.Add(coords);
-        timeOfCommand.Add(Time.timeSinceLevelLoad);
-        tetroNum.Add(tetroEnum);
-        // print(oldCommands.Count);
+        print(oldCommands.Count);
     }
 }
