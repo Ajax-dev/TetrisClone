@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -16,7 +17,7 @@ public class MainMenu : MonoBehaviour
     private Resolution[] availableResolutions;
 
     // Retrieve available resolutions
-    void Start()
+    private void Awake()
     {
         //Set quality to default which is high, and default volume
         SetQuality(qualityDropdown.value);
@@ -43,13 +44,21 @@ public class MainMenu : MonoBehaviour
         resolutionDropdown.AddOptions(resolutionOptions);
         resolutionDropdown.value = currentResIndex;
         resolutionDropdown.RefreshShownValue();
-
-
     }
     public void PlayGame()
     {
+        GameMasterController.isReplay = false;
         Debug.Log("Playing game:" + (SceneManager.GetActiveScene().buildIndex + 1));
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        Debug.Log("REPLAY IS PLAYING?? " + GameMasterController.isReplay.ToString());
+        // SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene("Game");
+    }
+
+    public void Replay()
+    {
+        GameMasterController.isReplay = true;
+        Debug.Log("REPLAY PLAYING" + GameMasterController.isReplay.ToString());
+        SceneManager.LoadScene("Game");
     }
 
     public void QuitGame()

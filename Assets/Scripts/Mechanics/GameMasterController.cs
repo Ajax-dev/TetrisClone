@@ -10,20 +10,29 @@ public class GameMasterController : MonoBehaviour
 {
     private GameData saveData = new GameData();
     [SerializeField] public TMP_Text level;
-    [SerializeField] public TMP_Text lives;
     [SerializeField] public TMP_Text score;
     [SerializeField] public TMP_Text highscore;
     [SerializeField] public TMP_Text linesCleared;
+    public static bool isReplay = false;
     
     private TetroMove tm;
     private GameData gm = new GameData();
+    
+    public static GameMasterController instance;
 
     private void Awake()
     {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
         tm = FindObjectOfType<TetroMove>();
         gm.Init();
         score.text = gm.GetScore().ToString();
-        lives.text = gm.GetLives().ToString();
         level.text = gm.GetLevel().ToString();
         // NEEDS CHANGING
         highscore.text = 0.ToString();
@@ -41,8 +50,6 @@ public class GameMasterController : MonoBehaviour
     {
         GridController.updateScore += UpdateScore;
         GridController.lineCleared += UpdateLineCleared;
-        GridController.removeLife += UpdateLives;
-        GridController.updateGame += UpdateGameState;
     }
 
     private void OnDisable()
@@ -50,11 +57,7 @@ public class GameMasterController : MonoBehaviour
         GridController.updateScore -= UpdateScore;
         GridController.lineCleared -= UpdateLineCleared;
     }
-
-    private void UpdateGameState()
-    {
-        tm.UpdateGameState();
-    }
+    
     private void UpdateScore()
     {
         gm.AddScore(20 * gm.GetLevel() * gm.GetLevel());
@@ -68,19 +71,33 @@ public class GameMasterController : MonoBehaviour
         linesCleared.text = gm.GetLinesCleared().ToString();
     }
 
-    private void UpdateLives()
-    {
-        gm.TakeLife();
-        lives.text = gm.GetLives().ToString();
-    }
-
 
     void PrintScore()
     {
         Debug.Log("The current score is: " + saveData.GetScore());
-        Debug.Log("The current lives are: " + saveData.GetLives());
         Debug.Log("The current level is: " + saveData.GetLevel());
         Debug.Log("The current lines cleared are: " + saveData.GetLinesCleared());
         
+    }
+    
+    // Command pattern
+    //coordinate of tetro - command pattern
+    public static List<Vector3> oldCommands = new List<Vector3>();
+    public static List<float> timeOfCommand = new List<float>();
+    public static List<int> tetroNum = new List<int>();
+    
+    public void updateCommandPattern(Vector3 coords, int tetroEnum)
+    {
+        // Debug.Log("transform is " + coords.ToString() + " with a time of " + Time.timeSinceLevelLoad + " tetro num is " + tetroEnum);
+        if (Time.timeSinceLevelLoad == 0)
+        {
+            oldCommands.Clear();
+            timeOfCommand.Clear();
+            tetroNum.Clear();
+        }
+        oldCommands.Add(coords);
+        timeOfCommand.Add(Time.timeSinceLevelLoad);
+        tetroNum.Add(tetroEnum);
+        // print(oldCommands.Count);
     }
 }

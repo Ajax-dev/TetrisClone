@@ -15,6 +15,8 @@ public class TetroMove : MonoBehaviour
     private float lastTime;
     private float timeToFall = 0.5f;
     private bool isPlaced = false;
+    
+    public int tetroEnum;
 
     // Start is called before the first frame update
     void Awake()
@@ -64,17 +66,8 @@ public class TetroMove : MonoBehaviour
             Debug.Log(this.name + " has no more children");
         }
     }
-    public void UpdateGameState ()
-    {
-        if (Time.timeScale == 0)
-        {
-            Time.timeScale = 1;
-        }
-        else
-        {
-            Time.timeScale = 0;
-        }
-    }
+
+    
     public void MoveRight()
     {
         transform.position += new Vector3(1, 0, 0);
@@ -85,6 +78,7 @@ public class TetroMove : MonoBehaviour
             transform.position += new Vector3(-1, 0, 0);
             GhostPair.GhostMove(Vector3.left);
         }
+        GameMasterController.instance.updateCommandPattern(transform.position, tetroEnum);
     }
 
     public void MoveLeft()
@@ -97,6 +91,7 @@ public class TetroMove : MonoBehaviour
             transform.position += new Vector3(1, 0, 0);
             GhostPair.GhostMove(Vector3.right);
         }
+        GameMasterController.instance.updateCommandPattern(transform.position, tetroEnum);
     }
 
     public void Rotate()
@@ -109,6 +104,7 @@ public class TetroMove : MonoBehaviour
             transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0,0,1), -90);
             GhostPair.GhostRotate(new Vector3(0,0,1),-90);
         }
+        GameMasterController.instance.updateCommandPattern(transform.position, tetroEnum);
     }
     public void MoveDown()
     {
@@ -127,6 +123,7 @@ public class TetroMove : MonoBehaviour
             FindObjectOfType<GenerateTetromino>().SpawnTetro();
         }
         lastTime = Time.time;
+        GameMasterController.instance.updateCommandPattern(transform.position, tetroEnum);
     }
     
     /**

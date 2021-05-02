@@ -2,16 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GridController : MonoBehaviour
 {
     public static event Action updateScore;
     public static event Action lineCleared;
 
-    public static event Action removeLife;
-
-    public static event Action updateGame;
-    
     public static GridController instance;
     
     private static int gridHeight = 21;
@@ -53,10 +50,16 @@ public class GridController : MonoBehaviour
             int yRound = Mathf.RoundToInt(children.transform.position.y);
 
             // Check if tetromino is out of bounds
+            if (yRound == gridHeight)
+            {
+                WaitForIt(3.0f);
+                return false;
+            }
             if (xRound < 0 || xRound >= gridWidth || yRound < 0 || yRound >= gridHeight)
             {
                 return false;
             }
+            
             
             // Check if tetromino is already in that position
             if (grid[xRound, yRound] != null)
@@ -120,5 +123,11 @@ public class GridController : MonoBehaviour
                 }
             }
         }
+    }
+
+    private IEnumerator WaitForIt(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        SceneManager.LoadScene("Menu");
     }
 }
