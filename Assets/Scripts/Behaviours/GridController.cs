@@ -52,7 +52,8 @@ public class GridController : MonoBehaviour
             // Check if tetromino is out of bounds
             if (yRound == gridHeight)
             {
-                WaitForIt(3.0f);
+                StartCoroutine(WaitForIt(3.0f));
+                SceneManager.LoadScene("Menu");
                 return false;
             }
             if (xRound < 0 || xRound >= gridWidth || yRound < 0 || yRound >= gridHeight)
@@ -125,9 +126,8 @@ public class GridController : MonoBehaviour
         }
     }
 
-    private IEnumerator WaitForIt(float waitTime)
+    public IEnumerator WaitForIt(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
-        SceneManager.LoadScene("Menu");
     }
 }

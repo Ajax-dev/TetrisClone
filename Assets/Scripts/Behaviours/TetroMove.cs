@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TetroMove : MonoBehaviour
 {
@@ -29,6 +30,7 @@ public class TetroMove : MonoBehaviour
 
     private void Start()
     {
+        
         if (GameMasterController.isReplay)
         {
             Debug.Log("Starting replay of " + Time.time);
@@ -46,6 +48,10 @@ public class TetroMove : MonoBehaviour
             } while (GridController.instance.isValidMove(tetromino));
             transform.position += new Vector3(0, +1, 0);
             
+        }
+        else
+        {
+            GameMasterController.instance.updateCommandPattern("Spawn", tetroEnum);
         }
     }
     // Update is called once per frame
@@ -73,84 +79,13 @@ public class TetroMove : MonoBehaviour
                     MoveDown();
                 }
             }
-
-            if (transform.childCount == 0)
-            {
-                Destroy(this.gameObject);
-                Debug.Log(this.name + " has no more children");
-            }
         }
         else
         {
             // ReplayUpdate();
+            // StartCoroutine(GridController.instance.WaitForIt(0.00001f));
             PlayReplay();
         }
-    }
-
-    private void PlayReplay()
-    {
-        print("Size of old commands " + GameMasterController.oldCommands.Count);
-        print("Size of time " + GameMasterController.timeOfCommand.Count);
-        print("Size of tetronum " + GameMasterController.tetroNum.Count);
-        if (Time.time == GameMasterController.timeOfCommand[0])
-        {
-            replayDir = GameMasterController.oldCommands[0];
-            GameMasterController.timeOfCommand.RemoveAt(0);
-            GameMasterController.oldCommands.RemoveAt(0);
-            GameMasterController.tetroNum.RemoveAt(0);
-            switch (replayDir)
-            {
-                case "Spawn":
-                    FindObjectOfType<GenerateTetromino>().SpawnTetro();
-                    break;
-                case "L":
-                    ReplayLeft();
-                    break;
-                case "R":
-                    ReplayRight();
-                    break;
-                case "T":
-                    ReplayRotate();
-                    break;
-                case "D":
-                    ReplayDown();
-                    break;
-                default:
-                    Debug.Log("No commands");
-                    break;
-            }
-        }
-    }
-    private void ReplayUpdate()
-    {
-        if (!isPlaced && !isGhost)
-        {
-            if (replayDir == "L")
-            {
-                MoveLeft();
-            }
-            else if (replayDir == "R")
-            {
-                MoveRight();
-            }
-            else if (replayDir == "T")
-            {
-                Rotate();
-            }
-
-            if (replayDir == "D")
-            {
-                MoveDown();
-            }
-            else
-            {
-                if (Time.time - lastTime > (Input.GetKey(KeyCode.DownArrow) ? timeToFall / 10 : timeToFall))
-                {
-                    MoveDown();
-                }
-            }
-        }
-
         if (transform.childCount == 0)
         {
             Destroy(this.gameObject);
@@ -158,7 +93,64 @@ public class TetroMove : MonoBehaviour
         }
     }
 
-    
+    private void PlayReplay()
+    {
+        // print("Size of old commands " + GameMasterController.oldCommands.Count);
+        // print("Size of time " + GameMasterController.timeOfCommand.Count);
+        // print("Size of tetronum " + GameMasterController.tetroNum.Count);
+        // print("Should enter if block " + (Time.timeSinceLevelLoad == GameMasterController.timeOfCommand[0]));
+        
+        if (Time.timeSinceLevelLoad >= GameMasterController.timeOfCommand[0])
+        {
+            if (!isPlaced)
+            {
+                GameMasterController.oldCommands.RemoveAt(0);
+                GameMasterController.timeOfCommand.RemoveAt(0);
+                GameMasterController.tetroNum.RemoveAt(0);
+            }
+            replayDir = GameMasterController.oldCommands[0];
+            if (!isPlaced)
+            {
+                switch (replayDir)
+                {
+                    case "L":
+                        ReplayLeft();
+                        break;
+                    case "R":
+                        ReplayRight();
+                        break;
+                    case "T":
+                        ReplayRotate();
+                        break;
+                    case "D":
+                        ReplayDown();
+                        break;
+                    case "Spawn":
+                        Debug.Log("SPAWN CALLED at " + Time.time);
+                        if (GameMasterController.timeOfCommand[0] != 0)
+                        {
+                            
+                        }
+
+                        break;
+                    default:
+                        Debug.Log("No commands");
+                        break;
+                }
+            }
+
+            print(GameMasterController.timeOfCommand.Count);
+        }
+
+        if (GameMasterController.timeOfCommand.Count == 1)
+        {
+            StartCoroutine(GridController.instance.WaitForIt(5.0f));
+            SceneManager.LoadScene("Menu");
+        }
+
+    }
+
+
     public void MoveRight()
     {
         GameMasterController.instance.updateCommandPattern("R", tetroEnum);
@@ -214,7 +206,6 @@ public class TetroMove : MonoBehaviour
             this.isPlaced = true;
             Destroy(GhostPair.gameObject);
             FindObjectOfType<GenerateTetromino>().SpawnTetro();
-            GameMasterController.instance.updateCommandPattern("Spawn", tetroEnum);
         }
         lastTime = Time.time;
     }
@@ -289,15 +280,18 @@ public class TetroMove : MonoBehaviour
     private void ReplayDown()
     {
         transform.position += new Vector3(0, -1, 0);
+        Debug.Log("Tetro: " + tetroEnum + " moves down by 1 at " + Time.time);
         if (!GridController.instance.isValidMove(tetromino))
         {
             transform.position += new Vector3(0, 1, 0);
             // Once its touched the ground add it to the array
             GridController.instance.addToGrid(tetromino);
             GridController.instance.CheckLines();
-            //Then spawn the next tetro
             // this.enabled = false;
             this.isPlaced = true;
+            GameMasterController.oldCommands.RemoveAt(0);
+            GameMasterController.timeOfCommand.RemoveAt(0);
+            GameMasterController.tetroNum.RemoveAt(0);
             FindObjectOfType<GenerateTetromino>().SpawnTetro();
         }
         lastTime = Time.time;

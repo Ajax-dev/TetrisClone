@@ -33,10 +33,11 @@ public class GenerateTetromino : MonoBehaviour
     public void SpawnTetro()
     {
         string isReplaying = GameMasterController.isReplay.ToString();
+        int spawnNumber;
         if(GameMasterController.isReplay == false)
         {
             Debug.Log("The spawner is spawning replay tetros" + isReplaying);
-            int spawnNumber = Random.Range(0, tetrominoes.Length);
+            spawnNumber = Random.Range(0, tetrominoes.Length);
             TetroMove t = Instantiate(tetrominoes[spawnNumber], transform.position,
                 Quaternion.identity);
             TetroMove g = Instantiate(ghosts[spawnNumber], transform.position, Quaternion.identity);
@@ -47,13 +48,15 @@ public class GenerateTetromino : MonoBehaviour
         {
             Debug.Log("The spawner is spawning replay tetros" + isReplaying);
             Debug.Log("The spawner is spawning" + GameMasterController.tetroNum[0]);
-            int spawnNumber = GameMasterController.tetroNum[0];
+            
+            spawnNumber = GameMasterController.tetroNum[0];
             TetroMove t = Instantiate(tetrominoes[spawnNumber], transform.position,
                 Quaternion.identity);
-            TetroMove g = Instantiate(ghosts[spawnNumber], transform.position, Quaternion.identity);
-            t.SetGhostPair(g);
             t.tetroEnum = spawnNumber;
-           
+            // TetroMove g = Instantiate(ghosts[spawnNumber], transform.position, Quaternion.identity);
+            // t.SetGhostPair(g);
+            // t.tetroEnum = spawnNumber;
+
         }
     }
 }
