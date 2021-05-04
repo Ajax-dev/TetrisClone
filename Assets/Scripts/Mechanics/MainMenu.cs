@@ -29,21 +29,22 @@ public class MainMenu : MonoBehaviour
 
         List<string> resolutionOptions = new List<string>();
 
-        int currentResIndex = 0;
-        for (int i = 0; i < availableResolutions.Length; i++)
-        {
-            string currentOption = availableResolutions[i].width + "x" + availableResolutions[i].height;
-            resolutionOptions.Add(currentOption);
-
-            if (availableResolutions[i].width == Screen.currentResolution.width && availableResolutions[i].height == Screen.currentResolution.height)
-            {
-                currentResIndex = i;
-            }
-        }
-        // Takes in a list of strings so must reformat the array into nicely formatted strings
-        resolutionDropdown.AddOptions(resolutionOptions);
-        resolutionDropdown.value = currentResIndex;
-        resolutionDropdown.RefreshShownValue();
+        // int currentResIndex = 0;
+        // for (int i = 0; i < availableResolutions.Length; i++)
+        // {
+        //     string currentOption = availableResolutions[i].width + "x" + availableResolutions[i].height;
+        //     resolutionOptions.Add(currentOption);
+        //
+        //     if (availableResolutions[i].width == Screen.currentResolution.width && availableResolutions[i].height == Screen.currentResolution.height)
+        //     {
+        //         currentResIndex = i;
+        //     }
+        // }
+        // // Takes in a list of strings so must reformat the array into nicely formatted strings
+        // resolutionDropdown.AddOptions(resolutionOptions);
+        // resolutionDropdown.value = currentResIndex;
+        // resolutionDropdown.RefreshShownValue();
+        SetResolution();
     }
     public void PlayGame()
     {
@@ -80,15 +81,15 @@ public class MainMenu : MonoBehaviour
         Debug.Log("Quality is now " + graphicIndex);
     }
 
-    public void SetFullScreen(bool isFullScreen)
+    public bool SetFullScreen(bool isFullScreen)
     {
-        Screen.fullScreen = isFullScreen;
+        return !Screen.fullScreen;
     }
 
-    public void SetResolution(int resolutionIndex)
+    public void SetResolution()
     {
-        Resolution res = availableResolutions[resolutionIndex];
-        Screen.SetResolution(res.width, res.height, Screen.fullScreen);
-        Debug.Log("Screen resolution set to: " + res.width + "x" + res.height + " and Fullscreen is set to " + Screen.fullScreen);
+        // Resolution res = availableResolutions[resolutionIndex];
+        Screen.SetResolution(1920, 1080, Screen.fullScreen);
+        // Debug.Log("Screen resolution set to: " + res.width + "x" + res.height + " and Fullscreen is set to " + Screen.fullScreen);
     }
 }

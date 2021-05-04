@@ -52,6 +52,7 @@ public class GridController : MonoBehaviour
             // Check if tetromino is out of bounds
             if (yRound == gridHeight)
             {
+                Time.timeScale = 0f;
                 StartCoroutine(WaitForIt(3.0f));
                 SceneManager.LoadScene("Menu");
                 return false;

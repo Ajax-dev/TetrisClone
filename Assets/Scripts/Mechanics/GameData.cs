@@ -10,6 +10,7 @@ public class GameData
     private int level;
     private int lives;
     private int linesCleared;
+    private int highscore;
 
     // To be called first on the game being started
     public void Init()
@@ -106,6 +107,16 @@ public class GameData
     public int GetScore()
     {
         return score;
+    }
+
+    public int GetHighScore()
+    {
+        return highscore;
+    }
+
+    public void SetHighScore(int hs)
+    {
+        highscore = hs;
     }
 
     public void SetLineCleared()
