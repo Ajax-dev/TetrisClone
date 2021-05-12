@@ -95,11 +95,6 @@ public class TetroMove : MonoBehaviour
 
     private void PlayReplay()
     {
-        // print("Size of old commands " + GameMasterController.oldCommands.Count);
-        // print("Size of time " + GameMasterController.timeOfCommand.Count);
-        // print("Size of tetronum " + GameMasterController.tetroNum.Count);
-        // print("Should enter if block " + (Time.timeSinceLevelLoad == GameMasterController.timeOfCommand[0]));
-        
         if (Time.timeSinceLevelLoad >= GameMasterController.timeOfCommand[0])
         {
             if (!isPlaced)
